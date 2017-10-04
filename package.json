@@ -1,0 +1,20 @@
+{
+  "name": "projeto2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jquery": "^3.2.12",
+    "jquery": "^3.2.1",
+    "moment": "^2.18.1",
+    "ts-loader": "^2.3.7"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.2.12"
+  }
+}

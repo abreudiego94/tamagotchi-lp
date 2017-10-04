@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head><title>TypeScript Greeter</title></head>
+    <link  rel="stylesheet" href="css/bootstrap.min.css"></link>
+    <link  rel="stylesheet" href="css/style.css"></link>
+    <body>
+      <nav class="navbar navbar-expand-lg navbar-light barra-status">
+        <div class="col-lg-4">
+          <h1>Felicidade</h1>
+          <h2 id="felicidade">60%</h2>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <h1>Fome</h1>
+          <h2 id="fome">60%</h2>
+          <div class="progress">
+            <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <h1>Vitalidade</h1>
+          <h2 id="vitalidade"></h2>
+        </div>
+      </nav>
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="row">
+              <div class="col-lg-3">
+                <h1>Ações</h1> 
+                <div class="row">
+                      <div class="col-lg-12">
+                          <button type="button" id="feed" class="btn btn-outline-primary btn-acoes">Feed</button>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-lg-12">
+                          <button type="button" id="flush" class="btn btn-outline-primary btn-acoes ">Flush</button>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-lg-12">
+                          <button type="button" id="play" class="btn btn-outline-primary btn-acoes ">Play</button>
+                      </div>
+                  </div>
+                  <div class="row">
+                      <div class="col-lg-12">
+                          <button type="button" id="cure" class="btn btn-outline-primary btn-acoes ">Cure</button>
+                      </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-lg-12">
+                        <button type="button" id="light"  class="btn btn-outline-primary btn-acoes ">Lights</button>
+                    </div>
+                </div>
+              </div>
+              <div class="col-lg-8">
+                <ul class="creatures" id="creatures">
+                  <li class="sad">
+                    <div class="click-anim">
+                      <figure style="background-color:mediumpurple">
+                        <div class="eye"></div>
+                        <div class="eye"></div>
+                        <div class="mouth teeth"></div>
+                      </figure>
+                    </div>
+                    <div class="shadow"></div>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+    </body>
+  
+      <script src="bundle.js"></script>
+</html>
