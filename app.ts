@@ -1,6 +1,6 @@
 import * as $ from "jquery";
 import *  as moment from "moment"
-import {getVitalidade,getUltimaAtualizacao,getFome,getFelicidade,getEstado,saveAll} from "./classes/Criatura";
+import {getVitalidade,getUltimaAtualizacao,getFome,getFelicidade,getEstado,saveAll,setFome} from "./classes/Criatura";
 import {verificaBanco} from "./classes/Banco";
 
 var btnFeed = document.getElementById("feed");
@@ -10,7 +10,9 @@ var btnCure = document.getElementById("cure");
 var btnLight = document.getElementById("light");
 
 btnFeed.onclick = function(){
-    
+    var fome = parseInt(getFome())+1;
+    setFome(fome);
+    atualizaBarrasEstadosPeloBanco();
 }
 btnFlush.onclick = function(){
 
@@ -31,6 +33,7 @@ setInterval(()=>{
     update()
 },5000)
 function update(){
+    console.log("lspkosasoakso")
     var deltaTime =( parseInt(new Date().getTime().toString()) - parseInt(getUltimaAtualizacao()))*(0.0001);
     let estado = getEstado();
     let taxaFome,taxaVitalidade,taxaFelicidade;
@@ -54,11 +57,16 @@ function update(){
     fome -= (taxaFome  *deltaTime)
     vitalidade -= (taxaVitalidade  *deltaTime)
     
-    
-
-
-
     saveAll(parseInt(vitalidade.toFixed(2)),parseInt(fome.toFixed(2)),parseInt(felicidade.toFixed(2)));
+    //atualizaBarrasEstados(felicidade,fome,vitalidade);
+    atualizaBarrasEstadosPeloBanco();
+
+}
+
+function atualizaBarrasEstadosPeloBanco(){
+    let felicidade = parseInt(getFelicidade());
+    let fome  = parseInt(getFome());
+    let vitalidade = parseInt(getVitalidade());
     atualizaBarrasEstados(felicidade,fome,vitalidade);
 }
 function atualizaBarrasEstados(felicidade:number,fome:number,vitalidade:number){

@@ -79,6 +79,9 @@ var btnPlay = document.getElementById("play");
 var btnCure = document.getElementById("cure");
 var btnLight = document.getElementById("light");
 btnFeed.onclick = function () {
+    var fome = parseInt(Criatura_1.getFome()) + 1;
+    Criatura_1.setFome(fome);
+    atualizaBarrasEstadosPeloBanco();
 };
 btnFlush.onclick = function () {
 };
@@ -94,6 +97,7 @@ setInterval(function () {
     update();
 }, 5000);
 function update() {
+    console.log("lspkosasoakso");
     var deltaTime = (parseInt(new Date().getTime().toString()) - parseInt(Criatura_1.getUltimaAtualizacao())) * (0.0001);
     var estado = Criatura_1.getEstado();
     var taxaFome, taxaVitalidade, taxaFelicidade;
@@ -117,6 +121,12 @@ function update() {
     fome -= (taxaFome * deltaTime);
     vitalidade -= (taxaVitalidade * deltaTime);
     Criatura_1.saveAll(parseInt(vitalidade.toFixed(2)), parseInt(fome.toFixed(2)), parseInt(felicidade.toFixed(2)));
+    atualizaBarrasEstadosPeloBanco();
+}
+function atualizaBarrasEstadosPeloBanco() {
+    var felicidade = parseInt(Criatura_1.getFelicidade());
+    var fome = parseInt(Criatura_1.getFome());
+    var vitalidade = parseInt(Criatura_1.getVitalidade());
     atualizaBarrasEstados(felicidade, fome, vitalidade);
 }
 function atualizaBarrasEstados(felicidade, fome, vitalidade) {
@@ -10413,6 +10423,10 @@ function getEstado() {
     return localStorage.getItem("estado");
 }
 exports.getEstado = getEstado;
+function setEstado(estado) {
+    localStorage.setItem("estado", estado);
+}
+exports.setEstado = setEstado;
 function setVitalidade(vitalidade) {
     localStorage.setItem("vitalidade", vitalidade.toString());
 }
