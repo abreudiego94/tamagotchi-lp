@@ -1,6 +1,6 @@
 import * as $ from "jquery";
 import *  as moment from "moment"
-import {getVitalidade,getUltimaAtualizacao,getFome,getFelicidade,getEstado,saveAll,setFome,setVitalidade} from "./classes/Criatura";
+import {getVitalidade,getUltimaAtualizacao,getFome,getFelicidade,getEstado,saveAll,setFome,setVitalidade,setFelicidade,setEstado} from "./classes/Criatura";
 import {verificaBanco,criaBanco} from "./classes/Banco";
 
 var btnFeed = document.getElementById("feed");
@@ -17,6 +17,9 @@ var atualValor = Math.round(getRandomArbitrary(0,9));
 var proximoValor = Math.round(getRandomArbitrary(0,9));
 var pontos = 0
 var jogadas = 0
+var luz = true ;
+var dormindo = false;
+var lixo  = 15000;
 
 
 function getRandomArbitrary(min:any, max:any) {
@@ -24,11 +27,24 @@ function getRandomArbitrary(min:any, max:any) {
 }
 btnFeed.onclick = function(){
     var fome = parseInt(getFome())+1;
-    setFome(fome);
+    if(fome<100){
+        setFome(fome);
+    }
+    else{
+        var vitalidade = parseInt(getVitalidade())-1;
+        setVitalidade(vitalidade);
+    }
+    
     atualizaBarrasEstadosPeloBanco();
 }
 btnFlush.onclick = function(){
-
+    mostralixo(false);
+}
+btnLight.onclick = function (){
+    acendeApagaLuz(false)
+    setTimeout(function(){
+        acendeApagaLuz(true)
+    },10000)
 }
 btnPlay.onclick= function(){
     jogadas = 0
@@ -58,7 +74,9 @@ btnReiniciar.onclick = function(){
 verificaBanco();
 atualizaBarrasEstadosPeloBanco();
 update();
-setTextJogo();
+geraLixo();
+
+
 
 setInterval(()=>{
     update()
@@ -75,14 +93,24 @@ function update(){
     }
     else{
         if(estado==='normal'){
-            taxaFome = 0.1;
-            taxaFelicidade = 0.2;
+            taxaFome = 0.01;
+            taxaFelicidade = 0.02;
             taxaVitalidade = 0.3 
         }
         else if(estado==="triste"){
             taxaFome = 0.3;
             taxaFelicidade = 0.1;
             taxaVitalidade = 1 ;
+        }
+        else if(estado === "fome"){
+            taxaFome = 0.5;
+            taxaFelicidade = 0.2;
+            taxaVitalidade = 2 ;
+        }
+        else if(estado === "doente"){
+            taxaFome = 2;
+            taxaFelicidade = 3;
+            taxaVitalidade = 5 ;
         }
         else{
             taxaFome = 1;
@@ -104,21 +132,38 @@ function atualizaBarrasEstadosPeloBanco(){
     let felicidade = parseInt(getFelicidade());
     let fome  = parseInt(getFome());
     let vitalidade = parseInt(getVitalidade());
+    if(fome < 30){
+        setEstado('fome')
+    }
+    else if(vitalidade < 50){
+        setEstado('doente')
+    }
+    else if(felicidade < 40){
+        setEstado('triste')
+    }
+    else{
+        setEstado('normal')
+    }
+    atualizaPetPeloBanco();
     atualizaBarrasEstados(felicidade,fome,vitalidade);
-    atualizaPet(felicidade,fome,vitalidade);
 }
 function atualizaBarrasEstados(felicidade:number,fome:number,vitalidade:number){
     $('#vitalidade').text(vitalidade);
     $('#felicidade').text(felicidade);
     $('#fome').text(fome);
 }
-function atualizaPet(felicidade:number,fome:number,vitalidade:number){
-    if(fome < 30){
+function atualizaPetPeloBanco(){
+    var estado = getEstado();
+   
+    if(estado === "fome"){
         $("#figurepet").css("background-color","red")
     }
-    else if (vitalidade < 50){
-        
-        $("#figurepet").css("background-color","limegreen")
+    else if (estado == "doente"){
+        $("#figurepet").css("background-color","#1b1e21")
+       
+    }
+    else if(estado === "triste"){
+        $("#figurepet").css("background-color","#868e96")
     }
     else{
         $("#figurepet").css("background-color","#4ae9b8")
@@ -143,16 +188,17 @@ function jogar(acao:any){
         
         if(pontos > jogadas-pontos){
             alert("Voce ganhou")
+            
         }
         else{
             alert("Voce Perdeu")
         }
         exibirJogo(false);
-        
-        
-        
-        
+        setFelicidade(100);
+        atualizaBarrasEstadosPeloBanco();
+             
     }
+    
 
     
 } 
@@ -180,5 +226,25 @@ function exibirJogo(exibi:boolean){
         return $("#jogo").fadeOut(4000);
     }
 
+}
+function acendeApagaLuz(acender:boolean){
+    if(acender){
+        return $('body').css("background","#F8EEB9")
+    }
+    return $('body').css("background","#000")
+}
+function geraLixo(){
+    setInterval(()=>{
+        mostralixo(true)
+    },lixo)
+    
+}
+function mostralixo(mostralixo:boolean){
+    if(mostralixo){
+        $('#lixo').fadeIn();
+    }
+    else{
+        $('#lixo').fadeOut();
+    }
     
 }

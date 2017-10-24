@@ -85,15 +85,31 @@ var atualValor = Math.round(getRandomArbitrary(0, 9));
 var proximoValor = Math.round(getRandomArbitrary(0, 9));
 var pontos = 0;
 var jogadas = 0;
+var luz = true;
+var dormindo = false;
+var lixo = 15000;
 function getRandomArbitrary(min, max) {
     return Math.random() * (max - min) + min;
 }
 btnFeed.onclick = function () {
     var fome = parseInt(Criatura_1.getFome()) + 1;
-    Criatura_1.setFome(fome);
+    if (fome < 100) {
+        Criatura_1.setFome(fome);
+    }
+    else {
+        var vitalidade = parseInt(Criatura_1.getVitalidade()) - 1;
+        Criatura_1.setVitalidade(vitalidade);
+    }
     atualizaBarrasEstadosPeloBanco();
 };
 btnFlush.onclick = function () {
+    mostralixo(false);
+};
+btnLight.onclick = function () {
+    acendeApagaLuz(false);
+    setTimeout(function () {
+        acendeApagaLuz(true);
+    }, 10000);
 };
 btnPlay.onclick = function () {
     jogadas = 0;
@@ -120,7 +136,7 @@ btnReiniciar.onclick = function () {
 Banco_1.verificaBanco();
 atualizaBarrasEstadosPeloBanco();
 update();
-setTextJogo();
+geraLixo();
 setInterval(function () {
     update();
 }, 5000);
@@ -136,14 +152,24 @@ function update() {
     }
     else {
         if (estado === 'normal') {
-            taxaFome = 0.1;
-            taxaFelicidade = 0.2;
+            taxaFome = 0.01;
+            taxaFelicidade = 0.02;
             taxaVitalidade = 0.3;
         }
         else if (estado === "triste") {
             taxaFome = 0.3;
             taxaFelicidade = 0.1;
             taxaVitalidade = 1;
+        }
+        else if (estado === "fome") {
+            taxaFome = 0.5;
+            taxaFelicidade = 0.2;
+            taxaVitalidade = 2;
+        }
+        else if (estado === "doente") {
+            taxaFome = 2;
+            taxaFelicidade = 3;
+            taxaVitalidade = 5;
         }
         else {
             taxaFome = 1;
@@ -161,20 +187,36 @@ function atualizaBarrasEstadosPeloBanco() {
     var felicidade = parseInt(Criatura_1.getFelicidade());
     var fome = parseInt(Criatura_1.getFome());
     var vitalidade = parseInt(Criatura_1.getVitalidade());
+    if (fome < 30) {
+        Criatura_1.setEstado('fome');
+    }
+    else if (vitalidade < 50) {
+        Criatura_1.setEstado('doente');
+    }
+    else if (felicidade < 40) {
+        Criatura_1.setEstado('triste');
+    }
+    else {
+        Criatura_1.setEstado('normal');
+    }
+    atualizaPetPeloBanco();
     atualizaBarrasEstados(felicidade, fome, vitalidade);
-    atualizaPet(felicidade, fome, vitalidade);
 }
 function atualizaBarrasEstados(felicidade, fome, vitalidade) {
     $('#vitalidade').text(vitalidade);
     $('#felicidade').text(felicidade);
     $('#fome').text(fome);
 }
-function atualizaPet(felicidade, fome, vitalidade) {
-    if (fome < 30) {
+function atualizaPetPeloBanco() {
+    var estado = Criatura_1.getEstado();
+    if (estado === "fome") {
         $("#figurepet").css("background-color", "red");
     }
-    else if (vitalidade < 50) {
-        $("#figurepet").css("background-color", "limegreen");
+    else if (estado == "doente") {
+        $("#figurepet").css("background-color", "#1b1e21");
+    }
+    else if (estado === "triste") {
+        $("#figurepet").css("background-color", "#868e96");
     }
     else {
         $("#figurepet").css("background-color", "#4ae9b8");
@@ -199,6 +241,8 @@ function jogar(acao) {
             alert("Voce Perdeu");
         }
         exibirJogo(false);
+        Criatura_1.setFelicidade(100);
+        atualizaBarrasEstadosPeloBanco();
     }
 }
 function setTextJogo() {
@@ -222,6 +266,25 @@ function exibirJogo(exibi) {
     }
     else {
         return $("#jogo").fadeOut(4000);
+    }
+}
+function acendeApagaLuz(acender) {
+    if (acender) {
+        return $('body').css("background", "#F8EEB9");
+    }
+    return $('body').css("background", "#000");
+}
+function geraLixo() {
+    setInterval(function () {
+        mostralixo(true);
+    }, lixo);
+}
+function mostralixo(mostralixo) {
+    if (mostralixo) {
+        $('#lixo').fadeIn();
+    }
+    else {
+        $('#lixo').fadeOut();
     }
 }
 
