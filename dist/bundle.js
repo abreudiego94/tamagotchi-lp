@@ -78,6 +78,16 @@ var btnFlush = document.getElementById("flush");
 var btnPlay = document.getElementById("play");
 var btnCure = document.getElementById("cure");
 var btnLight = document.getElementById("light");
+var btnMaior = document.getElementById("maior");
+var btnMenor = document.getElementById("menor");
+var btnReiniciar = document.getElementById('reiniciar');
+var atualValor = Math.round(getRandomArbitrary(0, 9));
+var proximoValor = Math.round(getRandomArbitrary(0, 9));
+var pontos = 0;
+var jogadas = 0;
+function getRandomArbitrary(min, max) {
+    return Math.random() * (max - min) + min;
+}
 btnFeed.onclick = function () {
     var fome = parseInt(Criatura_1.getFome()) + 1;
     Criatura_1.setFome(fome);
@@ -86,53 +96,133 @@ btnFeed.onclick = function () {
 btnFlush.onclick = function () {
 };
 btnPlay.onclick = function () {
+    jogadas = 0;
+    pontos = 0;
+    setTextJogo();
+    exibirJogo(true);
 };
 btnCure.onclick = function () {
+    var cure = parseInt(Criatura_1.getVitalidade()) + 1;
+    Criatura_1.setVitalidade(cure);
+    atualizaBarrasEstadosPeloBanco();
 };
-btnLight.onclick = function () {
+btnMenor.onclick = function () {
+    jogar('menor');
+};
+btnMaior.onclick = function () {
+    jogar('maior');
+};
+btnReiniciar.onclick = function () {
+    Banco_1.criaBanco();
+    reiniciar();
+    update();
 };
 Banco_1.verificaBanco();
+atualizaBarrasEstadosPeloBanco();
 update();
+setTextJogo();
 setInterval(function () {
     update();
 }, 5000);
 function update() {
-    console.log("lspkosasoakso");
     var deltaTime = (parseInt(new Date().getTime().toString()) - parseInt(Criatura_1.getUltimaAtualizacao())) * (0.0001);
     var estado = Criatura_1.getEstado();
     var taxaFome, taxaVitalidade, taxaFelicidade;
-    var felicidade = parseInt(Criatura_1.getFelicidade()), fome = parseInt(Criatura_1.getFome()), vitalidade = parseInt(Criatura_1.getVitalidade());
-    if (estado === 'normal') {
-        taxaFome = 0.5;
-        taxaFelicidade = 0.4;
-        taxaVitalidade = 0.3;
-    }
-    else if (estado === "triste") {
-        taxaFome = 0.7;
-        taxaFelicidade = 0.9;
-        taxaVitalidade = 1;
+    var felicidade = parseInt(Criatura_1.getFelicidade());
+    var fome = parseInt(Criatura_1.getFome());
+    var vitalidade = parseInt(Criatura_1.getVitalidade());
+    if ((fome <= 0) || (felicidade <= 0) || (vitalidade <= 0)) {
+        exibeGameOver();
     }
     else {
-        taxaFome = 1;
-        taxaFelicidade = 1.2;
-        taxaVitalidade = 1.3;
+        if (estado === 'normal') {
+            taxaFome = 0.1;
+            taxaFelicidade = 0.2;
+            taxaVitalidade = 0.3;
+        }
+        else if (estado === "triste") {
+            taxaFome = 0.3;
+            taxaFelicidade = 0.1;
+            taxaVitalidade = 1;
+        }
+        else {
+            taxaFome = 1;
+            taxaFelicidade = 1.2;
+            taxaVitalidade = 1.3;
+        }
+        felicidade -= (taxaFelicidade * deltaTime);
+        fome -= (taxaFome * deltaTime);
+        vitalidade -= (taxaVitalidade * deltaTime);
+        Criatura_1.saveAll(parseInt(vitalidade.toFixed(2)), parseInt(fome.toFixed(2)), parseInt(felicidade.toFixed(2)));
+        atualizaBarrasEstadosPeloBanco();
     }
-    felicidade -= (taxaFelicidade * deltaTime);
-    fome -= (taxaFome * deltaTime);
-    vitalidade -= (taxaVitalidade * deltaTime);
-    Criatura_1.saveAll(parseInt(vitalidade.toFixed(2)), parseInt(fome.toFixed(2)), parseInt(felicidade.toFixed(2)));
-    atualizaBarrasEstadosPeloBanco();
 }
 function atualizaBarrasEstadosPeloBanco() {
     var felicidade = parseInt(Criatura_1.getFelicidade());
     var fome = parseInt(Criatura_1.getFome());
     var vitalidade = parseInt(Criatura_1.getVitalidade());
     atualizaBarrasEstados(felicidade, fome, vitalidade);
+    atualizaPet(felicidade, fome, vitalidade);
 }
 function atualizaBarrasEstados(felicidade, fome, vitalidade) {
     $('#vitalidade').text(vitalidade);
     $('#felicidade').text(felicidade);
     $('#fome').text(fome);
+}
+function atualizaPet(felicidade, fome, vitalidade) {
+    if (fome < 30) {
+        $("#figurepet").css("background-color", "red");
+    }
+    else if (vitalidade < 50) {
+        $("#figurepet").css("background-color", "limegreen");
+    }
+    else {
+        $("#figurepet").css("background-color", "#4ae9b8");
+    }
+}
+function jogar(acao) {
+    jogadas++;
+    if (proximoValor > atualValor && acao === 'maior') {
+        pontos++;
+    }
+    if (proximoValor < atualValor && acao === 'menor') {
+        pontos++;
+    }
+    atualValor = proximoValor;
+    proximoValor = Math.round(getRandomArbitrary(0, 9));
+    setTextJogo();
+    if (jogadas === 5) {
+        if (pontos > jogadas - pontos) {
+            alert("Voce ganhou");
+        }
+        else {
+            alert("Voce Perdeu");
+        }
+        exibirJogo(false);
+    }
+}
+function setTextJogo() {
+    $('#jogovalor').text(atualValor);
+    $('#acertos').text(pontos);
+    $('#erros').text(jogadas - pontos);
+}
+function exibeGameOver() {
+    $('#creatures').hide();
+    $('#acoes').hide();
+    $('#gameover').show();
+}
+function reiniciar() {
+    $('#creatures').show();
+    $('#acoes').show();
+    $('#gameover').hide();
+}
+function exibirJogo(exibi) {
+    if (exibi) {
+        return $("#jogo").fadeIn();
+    }
+    else {
+        return $("#jogo").fadeOut(4000);
+    }
 }
 
 
