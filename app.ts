@@ -39,11 +39,19 @@ btnFeed.onclick = function(){
 }
 btnFlush.onclick = function(){
     mostralixo(false);
+    var vitalidade = parseInt(getVitalidade())+1;
+    if(vitalidade<100){
+        setVitalidade(vitalidade);
+        atualizaBarrasEstadosPeloBanco();
+    }
+    
 }
 btnLight.onclick = function (){
     acendeApagaLuz(false)
     setTimeout(function(){
         acendeApagaLuz(true)
+        setVitalidade(100);
+        atualizaBarrasEstadosPeloBanco();
     },10000)
 }
 btnPlay.onclick= function(){
@@ -133,13 +141,13 @@ function atualizaBarrasEstadosPeloBanco(){
     let fome  = parseInt(getFome());
     let vitalidade = parseInt(getVitalidade());
     if(fome < 30){
-        setEstado('fome')
+        setEstado('triste')
     }
     else if(vitalidade < 50){
         setEstado('doente')
     }
     else if(felicidade < 40){
-        setEstado('triste')
+        setEstado('cansado')
     }
     else{
         setEstado('normal')
@@ -155,7 +163,7 @@ function atualizaBarrasEstados(felicidade:number,fome:number,vitalidade:number){
 function atualizaPetPeloBanco(){
     var estado = getEstado();
    
-    if(estado === "fome"){
+    if(estado === "cansado"){
         $("#figurepet").css("background-color","red")
     }
     else if (estado == "doente"){
@@ -195,6 +203,7 @@ function jogar(acao:any){
         }
         exibirJogo(false);
         setFelicidade(100);
+        setVitalidade(parseInt(getVitalidade())-10);
         atualizaBarrasEstadosPeloBanco();
              
     }
@@ -219,6 +228,7 @@ function reiniciar(){
     $('#gameover').hide();
 }
 function exibirJogo(exibi:boolean){
+    
     if(exibi){
         return $("#jogo").fadeIn();
     }

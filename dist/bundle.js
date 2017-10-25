@@ -104,11 +104,18 @@ btnFeed.onclick = function () {
 };
 btnFlush.onclick = function () {
     mostralixo(false);
+    var vitalidade = parseInt(Criatura_1.getVitalidade()) + 1;
+    if (vitalidade < 100) {
+        Criatura_1.setVitalidade(vitalidade);
+        atualizaBarrasEstadosPeloBanco();
+    }
 };
 btnLight.onclick = function () {
     acendeApagaLuz(false);
     setTimeout(function () {
         acendeApagaLuz(true);
+        Criatura_1.setVitalidade(100);
+        atualizaBarrasEstadosPeloBanco();
     }, 10000);
 };
 btnPlay.onclick = function () {
@@ -188,13 +195,13 @@ function atualizaBarrasEstadosPeloBanco() {
     var fome = parseInt(Criatura_1.getFome());
     var vitalidade = parseInt(Criatura_1.getVitalidade());
     if (fome < 30) {
-        Criatura_1.setEstado('fome');
+        Criatura_1.setEstado('triste');
     }
     else if (vitalidade < 50) {
         Criatura_1.setEstado('doente');
     }
     else if (felicidade < 40) {
-        Criatura_1.setEstado('triste');
+        Criatura_1.setEstado('cansado');
     }
     else {
         Criatura_1.setEstado('normal');
@@ -209,7 +216,7 @@ function atualizaBarrasEstados(felicidade, fome, vitalidade) {
 }
 function atualizaPetPeloBanco() {
     var estado = Criatura_1.getEstado();
-    if (estado === "fome") {
+    if (estado === "cansado") {
         $("#figurepet").css("background-color", "red");
     }
     else if (estado == "doente") {
@@ -242,6 +249,7 @@ function jogar(acao) {
         }
         exibirJogo(false);
         Criatura_1.setFelicidade(100);
+        Criatura_1.setVitalidade(parseInt(Criatura_1.getVitalidade()) - 10);
         atualizaBarrasEstadosPeloBanco();
     }
 }
