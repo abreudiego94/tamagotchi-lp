@@ -113,7 +113,7 @@ function update(){
             taxaFelicidade = 0.1;
             taxaVitalidade = 1 ;
         }
-        else if(estado === "fome"){
+        else if(estado === "cansado"){
             taxaFome = 0.5;
             taxaFelicidade = 0.2;
             taxaVitalidade = 2 ;
