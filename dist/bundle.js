@@ -126,8 +126,10 @@ btnPlay.onclick = function () {
 };
 btnCure.onclick = function () {
     var cure = parseInt(Criatura_1.getVitalidade()) + 1;
-    Criatura_1.setVitalidade(cure);
-    atualizaBarrasEstadosPeloBanco();
+    if (cure < 100) {
+        Criatura_1.setVitalidade(cure);
+        atualizaBarrasEstadosPeloBanco();
+    }
 };
 btnMenor.onclick = function () {
     jogar('menor');

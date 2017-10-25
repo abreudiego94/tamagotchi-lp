@@ -64,8 +64,11 @@ btnPlay.onclick= function(){
 
 btnCure.onclick = function(){
     var cure = parseInt(getVitalidade())+1;
-    setVitalidade(cure);
-    atualizaBarrasEstadosPeloBanco();
+    if(cure < 100){
+        setVitalidade(cure);
+        atualizaBarrasEstadosPeloBanco();
+    }
+    
 }
 btnMenor.onclick = function(){
     jogar('menor')
